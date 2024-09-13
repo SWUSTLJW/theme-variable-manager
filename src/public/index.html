@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Theme Variable Manager</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Theme Variable Manager</h1>
+  
+  <div class="controls">
+    <button id="add-variable-button">Add Variable</button>
+    <button id="save-button">Save Changes</button>
+  </div>
+
+  <table id="variable-table">
+    <thead>
+      <tr>
+        <th class="variable-name">Variable Name</th>
+        <th class="variable-value">Theme 1 Value</th>
+        <th class="variable-comment">Theme 1 Comment</th>
+        <th class="variable-value">Theme 2 Value</th>
+        <th class="variable-comment">Theme 2 Comment</th>
+        <th class="variable-value">Theme 3 Value</th>
+        <th class="variable-comment">Theme 3 Comment</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  
+  <!-- 添加变量的弹窗 -->
+  <div id="add-variable-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Add New Variable</h2>
+      <label for="new-variable-name">Variable Name:</label>
+      <input type="text" id="new-variable-name" placeholder="new-variable" autocomplete="off" />
+      <button id="confirm-add-variable">Confirm</button>
+    </div>
+  </div>
+
+  <!-- 编辑变量名的弹窗 -->
+  <div id="edit-variable-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-edit">&times;</span>
+      <h2>Edit Variable Name</h2>
+      <label for="edit-variable-name">New Variable Name:</label>
+      <input type="text" id="edit-variable-name" placeholder="variable-name" autocomplete="off" />
+      <button id="confirm-edit-variable">Confirm</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
