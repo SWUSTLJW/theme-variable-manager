@@ -4,11 +4,9 @@ const path = require('path');
 const app = express();
 const port = 3000;
 
-// 静态资源目录
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
-// 读取配置文件
 const configPath = path.join(process.cwd(), 'themeConfig.json');
 
 // 检查配置文件是否存在
@@ -19,14 +17,14 @@ if (!fs.existsSync(configPath)) {
 
 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 
-// 主题文件目录
 const themesDir = path.join(process.cwd(), '');
 const themeFiles = config.themeFiles;
 
-// 读取主题文件并解析变量
 app.get('/variables', (req, res) => {
+  const fileNameList = themeFiles.map(item => item.match(/\/([\w-]+)\.less$/)[1]);
   const variables = {};
 
+  // 遍历每个主题文件
   themeFiles.forEach((file, index) => {
     const filePath = path.join(themesDir, file);
     const data = fs.readFileSync(filePath, 'utf8');
@@ -39,26 +37,26 @@ app.get('/variables', (req, res) => {
       const comment = match[3] ? match[3].trim().substring(2).trim() : '';
 
       if (!variables[name]) {
-        variables[name] = {};
+        // 初始化变量
+        variables[name] = { comment: comment, themes: [] };
       }
 
-      variables[name][`theme${index + 1}`] = { value, comment };
+      // 设置该主题的值
+      variables[name].themes[index] = value;
     }
-  });
 
-  // Ensure all variables are represented for each theme
-  themeFiles.forEach((_, index) => {
+    // 如果没有匹配的变量，则添加一个占位变量
     Object.keys(variables).forEach(name => {
-      if (!variables[name][`theme${index + 1}`]) {
-        variables[name][`theme${index + 1}`] = { value: '', comment: '' };
+      if (variables[name].themes.length <= index) {
+        variables[name].themes[index] = ''; // 空字符串占位
       }
     });
   });
 
-  res.json(variables);
+  res.json({ fileNameList, variables });
 });
 
-// 保存修改后的变量
+
 app.post('/save', (req, res) => {
   const variables = req.body;
 
@@ -66,26 +64,20 @@ app.post('/save', (req, res) => {
     const filePath = path.join(themesDir, file);
     let fileContent = '';
 
-    // 逐个变量写入文件
-    for (const [name, themes] of Object.entries(variables)) {
-      const theme = `theme${index + 1}`;
-      const value = themes[theme] ? themes[theme].value : '';
-      const comment = themes[theme] ? themes[theme].comment : '';
-
-      // 只写入非空值的变量
+    for (const [name, data] of Object.entries(variables)) {
+      const value = data.themes[index] ? data.themes[index] : '';
+      const comment = data.comment ? `// ${data.comment}` : '';
       if (value.trim() !== '') {
-        fileContent += `@${name}: ${value}; ${comment ? '// ' + comment : ''}\n`;
+        fileContent += `@${name}: ${value}; ${comment}\n`;
       }
     }
 
-    // 写入文件
     fs.writeFileSync(filePath, fileContent, 'utf8');
   });
 
   res.json({ message: 'Variables saved successfully' });
 });
 
-// 启动服务器
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
