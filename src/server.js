@@ -7,6 +7,8 @@ const port = 3000;
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
+// 存放@import导入语句
+let imports = [];
 const configPath = path.join(process.cwd(), 'themeConfig.json');
 
 // 检查配置文件是否存在
@@ -23,13 +25,21 @@ const themeFiles = config.themeFiles;
 app.get('/variables', (req, res) => {
   const fileNameList = themeFiles.map(item => item.match(/\/([\w-]+)\.less$/)[1]);
   const variables = {};
+  imports = [];
 
   // 遍历每个主题文件
   themeFiles.forEach((file, index) => {
     const filePath = path.join(themesDir, file);
     const data = fs.readFileSync(filePath, 'utf8');
+
+    // 匹配所有的 @import 语句
+    const importStatements = data.match(/^@import\s+.*;$/gm) || [];
+
     const variableRegex = /@([\w-]+):\s*([^;]+);\s*(\/\/.*)?/g;
     let match;
+
+    // 存储每个主题文件的导入语句
+    imports[index] = importStatements.join('\n');
 
     while ((match = variableRegex.exec(data)) !== null) {
       const name = match[1];
@@ -47,7 +57,7 @@ app.get('/variables', (req, res) => {
 
     // 如果没有匹配的变量，则添加一个占位变量
     Object.keys(variables).forEach(name => {
-      if (variables[name].themes.length <= index) {
+      if (variables[name].themes?.length <= index) {
         variables[name].themes[index] = ''; // 空字符串占位
       }
     });
@@ -63,6 +73,12 @@ app.post('/save', (req, res) => {
   themeFiles.forEach((file, index) => {
     const filePath = path.join(themesDir, file);
     let fileContent = '';
+    
+     // 获取当前文件的导入语句
+     const tempImports = imports[index] ? `${imports[index]}\n\n` : '';
+
+     // 保留原始的导入语句
+    fileContent += tempImports;
 
     for (const [name, data] of Object.entries(variables)) {
       const value = data.themes[index] ? data.themes[index] : '';
