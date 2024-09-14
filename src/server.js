@@ -2,7 +2,10 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const app = express();
-const port = 3000;
+
+const fileTypeList = ['less', 'scss'];
+let port = 3000;
+let fileType = 'less';
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
@@ -17,13 +20,15 @@ if (!fs.existsSync(configPath)) {
   process.exit(1);
 }
 
+// 读取配置文件
 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-
+port = config.port && !isNaN(config.port) ? config.port : 3000;
+fileType = config.fileType && fileTypeList.some(f => f === config.fileType) ? config.fileType : 'less';
 const themesDir = path.join(process.cwd(), '');
 const themeFiles = config.themeFiles;
 
 app.get('/variables', (req, res) => {
-  const fileNameList = themeFiles.map(item => item.match(/\/([\w-]+)\.less$/)[1]);
+  const fileNameList = themeFiles.map(item => fileType === 'less' ? item.match(/\/([\w-]+)\.less$/)[1] : item.match(/\/([\w-]+)\.scss$/)[1]);
   const variables = {};
   imports = [];
 
@@ -35,7 +40,7 @@ app.get('/variables', (req, res) => {
     // 匹配所有的 @import 语句
     const importStatements = data.match(/^@import\s+.*;$/gm) || [];
 
-    const variableRegex = /@([\w-]+):\s*([^;]+);\s*(\/\/.*)?/g;
+    const variableRegex = fileType === 'less' ? /@([\w-]+):\s*([^;]+);\s*(\/\/.*)?/g : /\$([\w-]+):\s*([^;]+);\s*(\/\/.*)?/g;
     let match;
 
     // 存储每个主题文件的导入语句
@@ -69,6 +74,7 @@ app.get('/variables', (req, res) => {
 
 app.post('/save', (req, res) => {
   const variables = req.body;
+  const headChar = fileType === 'less' ? '@' : '$';
 
   themeFiles.forEach((file, index) => {
     const filePath = path.join(themesDir, file);
@@ -84,7 +90,7 @@ app.post('/save', (req, res) => {
       const value = data.themes[index] ? data.themes[index] : '';
       const comment = data.comment ? `// ${data.comment}` : '';
       if (value.trim() !== '') {
-        fileContent += `@${name}: ${value}; ${comment}\n`;
+        fileContent += `${headChar}${name}: ${value}; ${comment}\n`;
       }
     }
 

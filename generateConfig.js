@@ -5,6 +5,8 @@ const path = require('path');
 
 // 默认的主题配置文件内容
 const defaultConfig = {
+  fileType: "less",
+  port: 3000,
   themeFiles: [
     './styles/themes/theme1.less',
     './styles/themes/theme2.less',
