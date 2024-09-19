@@ -56,9 +56,9 @@ module.exports = {
 
             // 在这里对 package.json 进行修改
             // 例如，将 bin 和 main 字段指向 dist 目录
-            packageJson.main = "index.bundle.js";
+            packageJson.main = "index.js";
             packageJson.bin = {
-              "theme-variable-manager": "./index.bundle.js",
+              "theme-variable-manager-tool": "./index.js",
             };
 
             // 将修改后的内容转换为 Buffer
