@@ -9,70 +9,74 @@
 </head>
 
 <body>
-  <h1>Theme Variable Manager</h1>
+  <div class="main-container">
+    <h1>Theme Variable Manager</h1>
 
-  <!-- 控制面板 -->
-  <div class="controls">
-    <button id="add-variable">Add Variable</button>
-    <button id="save-variables">Save</button>
-  </div>
-
-  <!-- 搜索框 -->
-  <div class="search-container">
-    <input type="text" id="search-input" placeholder="Search for variables..." autocomplete="off">
-  </div>
-
-  <!-- 变量表格 -->
-  <table id="variable-table">
-    <thead>
-      <tr>
-        <th>Variable Name</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
-  <!-- 添加变量模态框 -->
-  <div id="add-variable-modal" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <h2>Add Variable</h2>
-      <form id="add-variable-form">
-        <div class="form-group">
-          <label for="add-variable-name">Variable Name:</label>
-          <input type="text" id="add-variable-name" required autocomplete="off">
-        </div>
-  
-        <div class="form-group">
-          <label for="add-comment">Comment:</label>
-          <input type="text" id="add-comment" autocomplete="off">
-        </div>
-  
-        <!-- 用于存放主题变量值的输入框 -->
-        <div id="theme-values-container"></div>
-  
-        <div class="form-group">
-          <button type="submit" class="btn-primary">Add Variable</button>
-        </div>
-      </form>
+    <!-- 控制面板 -->
+    <div class="controls">
+      <button id="add-variable">Add Variable</button>
+      <button id="save-variables">Save</button>
     </div>
-  </div>  
 
-  <!-- 编辑变量模态框 -->
-  <div id="edit-variable-modal" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <h2>Edit Variable</h2>
-      <form id="edit-variable-form">
-        <div class="form-group">
-          <label for="edit-variable-name">Variable Name:</label>
-          <input type="text" id="edit-variable-name" placeholder="Enter variable name" required autocomplete="off">
-        </div>
+    <!-- 搜索框 -->
+    <div class="search-container">
+      <input type="text" id="search-input" placeholder="Search for variables..." autocomplete="off">
+    </div>
 
-        <div class="form-actions">
-          <button id="confirm-edit-variable" type="submit" class="btn-primary">Save</button>
-        </div>
-      </form>
+    <!-- 变量表格 -->
+    <div class="table-container">
+      <table id="variable-table">
+        <thead>
+          <tr>
+            <th>Variable Name</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- 添加变量模态框 -->
+    <div id="add-variable-modal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Add Variable</h2>
+        <form id="add-variable-form">
+          <div class="form-group">
+            <label for="add-variable-name">Variable Name:</label>
+            <input type="text" id="add-variable-name" required autocomplete="off">
+          </div>
+
+          <div class="form-group">
+            <label for="add-comment">Comment:</label>
+            <input type="text" id="add-comment" autocomplete="off">
+          </div>
+
+          <!-- 用于存放主题变量值的输入框 -->
+          <div id="theme-values-container"></div>
+
+          <div class="form-group">
+            <button type="submit" class="btn-primary">Add Variable</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 编辑变量模态框 -->
+    <div id="edit-variable-modal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Edit Variable</h2>
+        <form id="edit-variable-form">
+          <div class="form-group">
+            <label for="edit-variable-name">Variable Name:</label>
+            <input type="text" id="edit-variable-name" placeholder="Enter variable name" required autocomplete="off">
+          </div>
+
+          <div class="form-actions">
+            <button id="confirm-edit-variable" type="submit" class="btn-primary">Save</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 

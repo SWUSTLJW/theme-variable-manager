@@ -1,8 +1,20 @@
+html {
+  height: 100%;
+}
 body {
   font-family: Arial, sans-serif;
   background-color: #f4f4f9;
   margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   padding: 20px;
+  box-sizing: border-box;
 }
 
 td.action,
@@ -42,30 +54,6 @@ button {
 
 button:hover {
   background-color: #45a049;
-}
-
-#variable-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 20px 0;
-}
-
-#variable-table th,
-#variable-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-#variable-table th {
-  background-color: #f2f2f2;
-  text-align: center;
-}
-
-#variable-table td input {
-  width: 90%;
-  padding: 5px;
-  border-radius: 3px;
-  border: 1px solid #ddd;
 }
 
 /* Modal styles */
@@ -149,4 +137,45 @@ input[type="text"] {
 
 .close:hover {
   color: #000;
+}
+
+/* 表格容器 */
+.table-container {
+  overflow-y: auto; /* 添加垂直滚动条 */
+  border: 1px solid #eaeaea; /* 可选：添加边框使表格区域更明显 */
+  margin-top: 20px;
+  background-color: #fff;
+  flex: 1;
+}
+
+/* 可选：调整表格的整体样式 */
+#variable-table {
+  width: 100%; /* 设置表格宽度 */
+  border-collapse: collapse; /* 合并单元格边框 */
+}
+
+#variable-table th,
+#variable-table td {
+  text-align: center; /* 左对齐 */
+  border-bottom: 1px solid #ddd; /* 添加单元格下边框 */
+}
+
+#variable-table th {
+  background-color: #f2f2f2;
+  padding: 10px;
+}
+
+#variable-table td input {
+  width: 90%;
+  padding: 5px;
+  border-radius: 3px;
+  border: 1px solid #ddd;
+}
+
+/* 可选：设置表头固定 */
+#variable-table thead th {
+  position: sticky; /* 表头固定 */
+  top: 0; /* 固定在表格顶部 */
+  background-color: #f9f9f9; /* 表头背景色 */
+  z-index: 1; /* 设置 z-index 保证表头在内容之上 */
 }
