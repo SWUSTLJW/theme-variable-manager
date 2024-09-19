@@ -39,17 +39,17 @@ document.addEventListener("DOMContentLoaded", () => {
     nameTh.textContent = "Variable Name";
     thead.appendChild(nameTh);
 
-    // 添加 Comment 列的表头
-    const commentTh = document.createElement("th");
-    commentTh.textContent = "Comment";
-    thead.appendChild(commentTh);
-
     // 添加主题列
     themeFiles.forEach((_, index) => {
       const th = document.createElement("th");
       th.textContent = `${fileNameList[index]}`;
       thead.appendChild(th);
     });
+
+    // 添加 Comment 列的表头
+    const commentTh = document.createElement("th");
+    commentTh.textContent = "Comment";
+    thead.appendChild(commentTh);
 
     // 添加删除列的表头
     const deleteTh = document.createElement("th");
@@ -79,20 +79,6 @@ document.addEventListener("DOMContentLoaded", () => {
     nameCell.addEventListener("click", () => openEditModal(name));
     newRow.appendChild(nameCell);
 
-    // Comment 单元格
-    const commentCell = document.createElement("td");
-    const commentInput = document.createElement("input");
-    commentInput.type = "text";
-    commentInput.value = comment;
-    commentInput.classList.add("comment-input");
-    commentInput.addEventListener("input", (e) => {
-      commentCell.dataset.edited = true;
-      commentCell.dataset.value = e.target.value;
-      updateAllVariablesFromTable();
-    });
-    commentCell.appendChild(commentInput);
-    newRow.appendChild(commentCell);
-
     // 动态生成主题列
     themes.forEach((themeValue) => {
       const themeCell = document.createElement("td");
@@ -107,6 +93,20 @@ document.addEventListener("DOMContentLoaded", () => {
       themeCell.appendChild(themeInput);
       newRow.appendChild(themeCell);
     });
+
+    // Comment 单元格
+    const commentCell = document.createElement("td");
+    const commentInput = document.createElement("input");
+    commentInput.type = "text";
+    commentInput.value = comment;
+    commentInput.classList.add("comment-input");
+    commentInput.addEventListener("input", (e) => {
+      commentCell.dataset.edited = true;
+      commentCell.dataset.value = e.target.value;
+      updateAllVariablesFromTable();
+    });
+    commentCell.appendChild(commentInput);
+    newRow.appendChild(commentCell);
 
     // 删除按钮单元格
     const actionCell = document.createElement("td");

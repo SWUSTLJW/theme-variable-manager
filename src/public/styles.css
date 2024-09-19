@@ -93,7 +93,7 @@ button:hover {
 }
 
 /* 调整输入框的内边距 */
-input[type="text"] {
+input {
   width: 100%;
   padding: 10px; /* 增加输入框内边距 */
   border: 1px solid #ccc;
@@ -170,6 +170,7 @@ input[type="text"] {
   padding: 5px;
   border-radius: 3px;
   border: 1px solid #ddd;
+  text-align: center;
 }
 
 /* 可选：设置表头固定 */
