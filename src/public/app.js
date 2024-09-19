@@ -136,14 +136,19 @@ document.addEventListener("DOMContentLoaded", () => {
   function addVariable() {
     const variableName = addVariableNameInput.value.trim();
     const comment = addCommentInput.value.trim();
+
+    // 获取每个主题输入框的值
+    const themeValues = Array.from(
+      document.querySelectorAll(".theme-value-input")
+    ).map((input) => input.value.trim());
+
     if (variableName) {
       // 将新变量添加到 allVariables 对象
-      allVariables[variableName] = {
-        comment,
-        themes: Array(fileNameList.length).fill(""),
-      };
+      allVariables[variableName] = { comment, themes: themeValues };
+
       // 排序 allVariables
       sortAllVariables();
+
       renderVariables(Object.entries(allVariables)); // 重新渲染变量
       clearSearchValue();
       closeModal(addVariableModal);
@@ -198,6 +203,33 @@ document.addEventListener("DOMContentLoaded", () => {
     clearSearchValue();
   }
 
+  // 打开添加变量模态框并生成主题变量值输入框
+  function openAddVariableModal() {
+    addVariableNameInput.value = "";
+    addCommentInput.value = "";
+
+    // 获取主题文件数目，生成相应数量的输入框
+    const themeValuesContainer = document.getElementById(
+      "theme-values-container"
+    );
+    themeValuesContainer.innerHTML = ""; // 清空之前的输入框
+
+    fileNameList.forEach((fileName, index) => {
+      const themeLabel = document.createElement("label");
+      themeLabel.textContent = `Value for ${fileName}:`;
+
+      const themeInput = document.createElement("input");
+      themeInput.type = "text";
+      themeInput.classList.add("theme-value-input");
+      themeInput.dataset.index = index; // 用于标识输入框的顺序
+
+      themeValuesContainer.appendChild(themeLabel);
+      themeValuesContainer.appendChild(themeInput);
+    });
+
+    addVariableModal.style.display = "block";
+  }
+
   // 清空搜索框
   function clearSearchValue() {
     searchInput.value = "";
@@ -214,9 +246,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 监听添加变量按钮
   document.getElementById("add-variable").addEventListener("click", () => {
-    addVariableNameInput.value = "";
-    addCommentInput.value = "";
-    addVariableModal.style.display = "block";
+    openAddVariableModal();
   });
 
   // 监听添加变量表单提交

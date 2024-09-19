@@ -82,80 +82,71 @@ button:hover {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
+/* 增加内边距和外边距 */
 .modal-content {
   background-color: #fff;
+  padding: 30px; /* 增加内边距 */
+  border-radius: 10px; /* 调整圆角 */
+  width: 450px; /* 增加弹框宽度 */
+  max-width: 90%;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* 加强阴影效果 */
+  transform: translateY(-30px);
+  transition: transform 0.3s ease, opacity 0.3s ease;
   margin: auto;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  width: 80%;
-  max-width: 600px;
 }
 
-/* Close button */
-.close,
-.close-add-variable {
-  color: #aaa;
-  float: right;
-  font-size: 24px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.close:hover,
-.close-add-variable:hover {
-  color: #000;
-}
-
-/* Form styles */
+/* 增加输入框组之间的间距 */
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 20px; /* 增加底部间距 */
 }
 
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
+.form-group input {
+  margin-top: 10px;
 }
 
-.form-group input[type="text"] {
-  width: 90%;
-  padding: 10px;
+/* 调整输入框的内边距 */
+input[type="text"] {
+  width: 100%;
+  padding: 10px; /* 增加输入框内边距 */
+  border: 1px solid #ccc;
   border-radius: 4px;
-  border: 1px solid #ddd;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
 }
 
-/* Form actions */
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
+#theme-values-container {
+  margin-top: 20px; /* 增加顶部间距 */
+  padding: 15px 0; /* 增加内边距 */
+  border-radius: 4px;
 }
 
-.form-actions button {
+.theme-value-input {
+  margin: 10px 0;
+}
+
+/* 调整按钮样式 */
+.btn-primary {
+  width: 100%;
+  padding: 12px; /* 增加按钮内边距 */
   background-color: #4CAF50;
-  color: white;
-  padding: 10px 20px;
+  color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
+  transition: background-color 0.3s ease;
 }
 
-.form-actions button:hover {
-  background-color: #45a049;
+/* 关闭按钮的样式调整 */
+.close {
+  position: absolute;
+  top: 15px; /* 调整关闭按钮位置 */
+  right: 20px;
+  font-size: 24px;
+  color: #aaa;
+  cursor: pointer;
 }
 
-/* 搜索框样式 */
-.search-container {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-#search-input {
-  width: 50%;
-  padding: 10px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-  font-size: 16px;
+.close:hover {
+  color: #000;
 }
