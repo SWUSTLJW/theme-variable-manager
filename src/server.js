@@ -72,7 +72,7 @@ app.get('/variables', (req, res) => {
 });
 
 
-app.post('/save', (req, res) => {
+app.post('/save-variables', (req, res) => {
   const variables = req.body;
   const headChar = fileType === 'less' ? '@' : '$';
 

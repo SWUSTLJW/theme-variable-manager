@@ -1,222 +1,284 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const variableTableBody = document.querySelector('#variable-table tbody');
-  const editVariableModal = document.getElementById('edit-variable-modal');
-  const addVariableModal = document.getElementById('add-variable-modal');
-  const addVariableForm = document.getElementById('add-variable-form');
-  const addVariableNameInput = document.getElementById('add-variable-name');
-  const addCommentInput = document.getElementById('add-comment');
-  const editVariableNameInput = document.getElementById('edit-variable-name');
-  let currentEditVariableName = '';
+document.addEventListener("DOMContentLoaded", () => {
+  const variableTableBody = document.querySelector("#variable-table tbody");
+  const editVariableModal = document.getElementById("edit-variable-modal");
+  const addVariableModal = document.getElementById("add-variable-modal");
+  const addVariableForm = document.getElementById("add-variable-form");
+  const addVariableNameInput = document.getElementById("add-variable-name");
+  const addCommentInput = document.getElementById("add-comment");
+  const editVariableNameInput = document.getElementById("edit-variable-name");
+  const searchInput = document.getElementById("search-input");
+  const saveButton = document.getElementById("save-variables");
+  let currentEditVariableName = "";
   let fileNameList = null;
+  let allVariables = {}; // 存储所有变量数据，使用对象形式
 
   // 加载变量
   function loadVariables() {
-    fetch('/variables')
-      .then(response => response.json())
-      .then(data => {
-        const {fileNameList: tempFileNameList, variables} = data;
+    fetch("/variables")
+      .then((response) => response.json())
+      .then((data) => {
+        const { fileNameList: tempFileNameList, variables } = data;
         fileNameList = tempFileNameList;
-        variableTableBody.innerHTML = '';
-        const themeFiles = Object.keys(variables[Object.keys(variables)[0]].themes);
-        
-        // 动态生成表头
-        const thead = document.querySelector('#variable-table thead tr');
-        while (thead.children.length > 2) {
-          thead.removeChild(thead.lastChild);
-        }
-
-        // 添加主题列和删除列的表头
-        themeFiles.forEach((_, index) => {
-          const th = document.createElement('th');
-          th.textContent = `${tempFileNameList[index]}`;
-          thead.appendChild(th);
-        });
-
-        // 添加 Comment 列列表头
-        const commentTh = document.createElement('th');
-        commentTh.textContent = 'Comment';
-        thead.insertBefore(commentTh, thead.children[thead.children.length]);
-
-        // 添加删除列的表头
-        const deleteTh = document.createElement('th');
-        deleteTh.textContent = 'Action';
-        deleteTh.classList.add('action');
-        thead.appendChild(deleteTh);
-
-        Object.entries(variables).forEach(([name, data]) => {
-          addVariableRow(name, data.comment, data.themes);
-        });
+        allVariables = variables; // 直接存储为对象
+        sortAllVariables();
+        renderTableHeader(); // 初始化表头
+        renderVariables(Object.entries(allVariables)); // 初始化表格内容
       });
   }
 
+  // 渲染表头
+  function renderTableHeader() {
+    const themeFiles = fileNameList;
+    const thead = document.querySelector("#variable-table thead tr");
+
+    // 清空表头
+    thead.innerHTML = "";
+
+    // 添加变量名称列的表头
+    const nameTh = document.createElement("th");
+    nameTh.textContent = "Variable Name";
+    thead.appendChild(nameTh);
+
+    // 添加 Comment 列的表头
+    const commentTh = document.createElement("th");
+    commentTh.textContent = "Comment";
+    thead.appendChild(commentTh);
+
+    // 添加主题列
+    themeFiles.forEach((_, index) => {
+      const th = document.createElement("th");
+      th.textContent = `${fileNameList[index]}`;
+      thead.appendChild(th);
+    });
+
+    // 添加删除列的表头
+    const deleteTh = document.createElement("th");
+    deleteTh.textContent = "Action";
+    deleteTh.classList.add("action");
+    thead.appendChild(deleteTh);
+  }
+
+  // 渲染变量
+  function renderVariables(variables) {
+    variableTableBody.innerHTML = "";
+
+    variables.forEach(([name, data]) => {
+      addVariableRow(name, data.comment, data.themes);
+    });
+    addInputListeners(); // 添加事件监听器
+  }
+
   // 添加一行变量的函数
-  function addVariableRow(name = 'new-variable', comment = '', themes = []) {
-    const newRow = document.createElement('tr');
+  function addVariableRow(name = "new-variable", comment = "", themes = []) {
+    const newRow = document.createElement("tr");
 
     // 变量名称单元格
-    const nameCell = document.createElement('td');
+    const nameCell = document.createElement("td");
     nameCell.textContent = name;
-    nameCell.classList.add('variable-name');
-    nameCell.addEventListener('click', () => {
-      currentEditVariableName = name;
-      editVariableNameInput.value = name;
-      editVariableModal.style.display = 'block';
-    });
+    nameCell.classList.add("variable-name");
+    nameCell.addEventListener("click", () => openEditModal(name));
     newRow.appendChild(nameCell);
 
-    // 主题列
-    const themeFilesCount = document.querySelectorAll('#variable-table thead th').length - 3;
-    for (let i = 0; i < themeFilesCount; i++) {
-      const themeCell = document.createElement('td');
-      const themeInput = document.createElement('input');
-      themeInput.value = themes[i] || ''; // 填充主题值或空白
-      themeCell.appendChild(themeInput);
-      newRow.appendChild(themeCell);
-    }
-
-    // 备注单元格
-    const commentCell = document.createElement('td');
-    const commentInput = document.createElement('input');
+    // Comment 单元格
+    const commentCell = document.createElement("td");
+    const commentInput = document.createElement("input");
+    commentInput.type = "text";
     commentInput.value = comment;
-    commentCell.classList.add('variable-comment');
+    commentInput.classList.add("comment-input");
+    commentInput.addEventListener("input", (e) => {
+      commentCell.dataset.edited = true;
+      commentCell.dataset.value = e.target.value;
+      updateAllVariablesFromTable();
+    });
     commentCell.appendChild(commentInput);
     newRow.appendChild(commentCell);
 
-    // 删除按钮单元格
-    const deleteCell = document.createElement('td');
-    const deleteButton = document.createElement('button');
-    deleteButton.textContent = 'Delete';
-    deleteButton.addEventListener('click', () => {
-      newRow.remove();
+    // 动态生成主题列
+    themes.forEach((themeValue) => {
+      const themeCell = document.createElement("td");
+      const themeInput = document.createElement("input");
+      themeInput.type = "text";
+      themeInput.value = themeValue;
+      themeInput.classList.add("theme-input");
+      themeInput.addEventListener("input", () => {
+        themeCell.dataset.edited = true;
+        updateAllVariablesFromTable();
+      });
+      themeCell.appendChild(themeInput);
+      newRow.appendChild(themeCell);
     });
-    deleteCell.classList.add('action');
-    deleteCell.appendChild(deleteButton);
-    newRow.appendChild(deleteCell);
 
-    // 将新行添加到表格中
+    // 删除按钮单元格
+    const actionCell = document.createElement("td");
+    actionCell.classList.add("action");
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+    deleteButton.addEventListener("click", () => deleteVariable(newRow));
+    actionCell.appendChild(deleteButton);
+    newRow.appendChild(actionCell);
+
     variableTableBody.appendChild(newRow);
+  }
+
+  // 打开编辑模态框
+  function openEditModal(variableName) {
+    currentEditVariableName = variableName;
+    editVariableNameInput.value = variableName;
+    editVariableModal.style.display = "block";
+  }
+
+  // 关闭模态框
+  function closeModal(modal) {
+    modal.style.display = "none";
+  }
+
+  // 添加变量
+  function addVariable() {
+    const variableName = addVariableNameInput.value.trim();
+    const comment = addCommentInput.value.trim();
+    if (variableName) {
+      // 将新变量添加到 allVariables 对象
+      allVariables[variableName] = {
+        comment,
+        themes: Array(fileNameList.length).fill(""),
+      };
+      // 排序 allVariables
+      sortAllVariables();
+      renderVariables(Object.entries(allVariables)); // 重新渲染变量
+      clearSearchValue();
+      closeModal(addVariableModal);
+    }
+  }
+
+  // 更新变量
+  function updateVariable() {
+    const newName = editVariableNameInput.value.trim();
+    if (newName && currentEditVariableName) {
+      const oldData = allVariables[currentEditVariableName];
+      delete allVariables[currentEditVariableName];
+      allVariables[newName] = oldData;
+      // 排序 allVariables
+      sortAllVariables();
+      renderVariables(Object.entries(allVariables));
+      clearSearchValue();
+      closeModal(editVariableModal);
+    }
   }
 
   // 保存变量
   function saveVariables() {
-    const variables = {};
+    updateAllVariablesFromTable(); // 保存前更新全局变量
+    // 排序 allVariables
+    sortAllVariables();
 
-    document.querySelectorAll('#variable-table tbody tr').forEach(row => {
-      const name = row.querySelector('.variable-name').textContent;
-      const comment = row.querySelector('.variable-comment input').value;
-      const themes = [...row.querySelectorAll('td input')].slice(0, -1).map(input => input.value);
-
-      variables[name] = { comment, themes };
-    });
-
-    fetch('/save', {
-      method: 'POST',
+    // 发送保存请求
+    fetch("/save-variables", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(variables),
+      body: JSON.stringify(allVariables),
     })
-      .then(response => response.json())
-      .then(data => {
-        alert(data.message);
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Variables saved:", data);
+        alert("Variables have been saved successfully!");
       })
-      .catch(error => {
-        console.error('Error saving variables:', error);
+      .catch((error) => {
+        console.error("Error saving variables:", error);
+        alert("Failed to save variables. Please try again.");
       });
   }
 
-  // 打开“添加变量”模态框
-  document.getElementById('add-variable').addEventListener('click', () => {
-    addVariableModal.style.display = 'block';
-    generateThemeFields(addVariableForm)
+  // 删除变量
+  function deleteVariable(row) {
+    const name = row.querySelector(".variable-name").textContent;
+    delete allVariables[name];
+    renderVariables(Object.entries(allVariables));
+    clearSearchValue();
+  }
+
+  // 清空搜索框
+  function clearSearchValue() {
+    searchInput.value = "";
+  }
+
+  // 监听搜索输入框
+  searchInput.addEventListener("input", (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    const filteredVariables = Object.entries(allVariables).filter(([name]) =>
+      name.toLowerCase().includes(searchTerm)
+    );
+    renderVariables(filteredVariables);
   });
 
-  // 动态生成主题输入字段
-  function generateThemeFields(modalForm, variableData = {}) {
-    const formGroup = modalForm.querySelector('.theme-fields'); // 使用类名找到目标位置
-    formGroup.innerHTML = ''; // 清空现有的内容
-    fileNameList.forEach((theme, index) => {
-      // 创建一个输入框
-      const inputGroup = document.createElement('div');
-      inputGroup.className = 'form-group';
+  // 监听添加变量按钮
+  document.getElementById("add-variable").addEventListener("click", () => {
+    addVariableNameInput.value = "";
+    addCommentInput.value = "";
+    addVariableModal.style.display = "block";
+  });
 
-      const label = document.createElement('label');
-      label.textContent = `${theme} Value:`; // 动态设置标签
-      label.setAttribute('for', `theme-${index}`);
+  // 监听添加变量表单提交
+  addVariableForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    addVariable();
+  });
 
-      const input = document.createElement('input');
-      input.autocomplete = 'off';
-      input.type = 'text';
-      input.id = theme;
-      input.placeholder = `Enter value for ${theme}`;
-      input.className = 'theme-input';
+  // 监听编辑变量模态框保存按钮
+  document
+    .getElementById("edit-variable-form")
+    .addEventListener("submit", (e) => {
+      e.preventDefault();
+      updateVariable();
+    });
 
-      // 如果是编辑模式，预填充值
-      if (variableData.themes && variableData.themes[index]) {
-        input.value = variableData.themes[index];
-      }
+  // 监听保存按钮
+  saveButton.addEventListener("click", () => {
+    saveVariables();
+  });
 
-      inputGroup.appendChild(label);
-      inputGroup.appendChild(input);
-      formGroup.appendChild(inputGroup);
+  // 监听关闭模态框按钮
+  document.querySelectorAll(".close, .close-add-variable").forEach((button) => {
+    button.addEventListener("click", (e) => {
+      closeModal(e.target.closest(".modal"));
+    });
+  });
+
+  // 监听表格输入框的变化，实时更新全局变量
+  function updateAllVariablesFromTable() {
+    // 遍历表格中的每一行
+    variableTableBody.querySelectorAll("tr").forEach((row) => {
+      const name = row.querySelector(".variable-name").textContent.trim();
+
+      // 获取注释和主题值
+      const commentInput = row.querySelector(".comment-input");
+      const themeInputs = row.querySelectorAll(".theme-input");
+
+      // 更新全局变量
+      allVariables[name] = {
+        comment: commentInput ? commentInput.value.trim() : "",
+        themes: Array.from(themeInputs).map((input) => input.value.trim()),
+      };
     });
   }
 
-  // 关闭“添加变量”模态框
-  document.querySelector('.close-add-variable').addEventListener('click', () => {
-    addVariableModal.style.display = 'none';
-  });
+  // 为所有输入框添加事件监听器
+  function addInputListeners() {
+    variableTableBody
+      .querySelectorAll(".comment-input, .theme-input")
+      .forEach((input) => {
+        input.addEventListener("input", updateAllVariablesFromTable);
+      });
+  }
 
-  // 确认添加变量
-  addVariableForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const newName = addVariableNameInput.value.trim();
-    const newComment = addCommentInput.value; // 注释字段设为可选项
-    const themes = [];
+  // 按变量名对 allVariables 对象进行排序
+  function sortAllVariables() {
+    allVariables = Object.fromEntries(
+      Object.entries(allVariables).sort(([a], [b]) => a.localeCompare(b))
+    );
+  }
 
-    document.querySelectorAll('.theme-input').forEach(input => {
-      themes.push(input.value);
-    });
-
-    if (!newName) {
-      alert('Variable name is required');
-      return;
-    }
-
-    addVariableRow(newName, newComment, themes);
-    addVariableModal.style.display = 'none';
-    addVariableNameInput.value = '';
-    addCommentInput.value = ''; // 重置 Comment 字段
-  });
-
-  editVariableModal.addEventListener('keypress', (event) => {
-    if (event.key === 'Enter') {
-      document.getElementById('confirm-edit-variable').click();
-    }
-  });
-
-  // 保存按钮点击事件
-  document.getElementById('save-variables').addEventListener('click', saveVariables);
-
-  // 保存修改的变量名
-  document.getElementById('confirm-edit-variable').addEventListener('click', () => {
-    event.preventDefault();
-    const updatedName = editVariableNameInput.value;
-
-    document.querySelectorAll('#variable-table tbody .variable-name').forEach(nameCell => {
-      if (nameCell.textContent === currentEditVariableName) {
-        nameCell.textContent = updatedName;
-      }
-    });
-
-    editVariableModal.style.display = 'none';
-  });
-
-  // 关闭编辑模态框
-  document.querySelector('.close').addEventListener('click', () => {
-    editVariableModal.style.display = 'none';
-  });
-
-  // 加载变量
+  // 初始化
   loadVariables();
 });
