@@ -1,15 +1,31 @@
 {
   "name": "theme-variable-manager",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "index.js",
   "bin": {
     "theme-variable-manager": "./index.js"
   },
   "scripts": {
     "generate-config": "node generateConfig.js",
-    "start-tool": "node startTool.js"
+    "start-tool": "node startTool.js",
+    "prepublishOnly": "npm run build",
+    "build:frontend": "webpack --config webpack.frontend.config.js",
+    "build:backend": "webpack --config webpack.backend.config.js",
+    "build": "npm run build:frontend && npm run build:backend"
   },
   "dependencies": {
+    "@babel/preset-env": "^7.25.4",
+    "babel-loader": "^9.2.1",
     "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "copy-webpack-plugin": "^12.0.2",
+    "cssnano": "^7.0.6",
+    "html-loader": "^5.1.0",
+    "html-minifier": "^4.0.0",
+    "html-webpack-plugin": "^5.6.0",
+    "terser-webpack-plugin": "^5.3.10",
+    "webpack": "^5.94.0",
+    "webpack-cli": "^5.1.4"
   }
 }
