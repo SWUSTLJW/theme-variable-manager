@@ -3,10 +3,13 @@ const TerserPlugin = require('terser-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  entry: './src/public/index.html', // 前端 JavaScript 入口文件
+  entry: {
+    index: './src/public/index.html',
+    app: "./src/public/app.js"
+  }, // 前端 JavaScript 入口文件
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js', // 输出的 JavaScript 文件
+    path: path.resolve(__dirname, 'dist/src/public'),
+    filename: '[name].js', // 输出的 JavaScript 文件
     clean: true, // 清理 /dist 文件夹
   },
   module: {

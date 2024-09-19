@@ -1,6 +1,6 @@
 {
-  "name": "theme-variable-manager",
-  "version": "1.0.2",
+  "name": "theme-variable-manager-tool",
+  "version": "0.0.0",
   "main": "index.js",
   "bin": {
     "theme-variable-manager": "./index.js"
@@ -8,7 +8,6 @@
   "scripts": {
     "generate-config": "node generateConfig.js",
     "start-tool": "node startTool.js",
-    "prepublishOnly": "npm run build",
     "build:frontend": "webpack --config webpack.frontend.config.js",
     "build:backend": "webpack --config webpack.backend.config.js",
     "build": "npm run build:frontend && npm run build:backend"

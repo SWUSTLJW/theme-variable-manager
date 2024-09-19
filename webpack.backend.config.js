@@ -5,10 +5,13 @@ const webpack = require("webpack");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
-  entry: "./index.js", // 入口文件
+  entry: {
+    index: "./index.js",
+    server: "./src/server.js"
+  }, // 入口文件
   output: {
-    path: path.resolve(__dirname, "dist"),
-    filename: "index.bundle.js",
+    path: path.resolve(__dirname, "dist/src"),
+    filename: "[name].js",
   },
   target: "node",
   mode: "production",
