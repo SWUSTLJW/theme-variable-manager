@@ -1,9 +1,13 @@
 {
   "name": "theme-variable-manager-tool",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "index.js",
   "bin": {
     "theme-variable-manager-tool": "./index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SWUSTLJW/theme-variable-manager.git"
   },
   "scripts": {
     "generate-config": "node generateConfig.js",

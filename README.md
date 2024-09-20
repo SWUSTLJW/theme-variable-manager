@@ -1,6 +1,8 @@
 # Theme Variable Manager Tool
 
 `theme-variable-manager-tool` 是一个用于管理多主题变量的工具，帮助开发者动态修改和维护主题的 `.less` 文件。
+# npm地址
+https://www.npmjs.com/package/theme-variable-manager-tool
 
 ## 功能
 - 动态修改主题变量
