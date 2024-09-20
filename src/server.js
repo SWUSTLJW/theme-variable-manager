@@ -12,7 +12,7 @@ app.use(express.json());
 
 // 存放@import导入语句
 let imports = [];
-const configPath = path.join(process.cwd(), 'themeConfig.json');
+const configPath = process.argv[2] || path.join(process.cwd(), 'themeConfig.json');
 
 // 检查配置文件是否存在
 if (!fs.existsSync(configPath)) {

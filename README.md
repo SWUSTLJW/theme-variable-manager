@@ -32,7 +32,7 @@ npx theme-variable-manager-tool start-tool
 
 3. 自定义配置文件路径
 你可以通过命令行参数指定自定义的配置文件路径：
-npx theme-variable-manager-tool start-tool --config ./path/to/your/themeConfig.json
+npx theme-variable-manager-tool start-tool ./path/to/your/themeConfig.json
 项目结构
 |-- themes/                // 主题文件存放路径
     |-- theme1.less        // 主题1文件
@@ -49,7 +49,7 @@ Fork 本仓库
 常见问题
 如何指定配置文件？ 你可以在启动工具时通过 --config 参数指定配置文件路径：
 
-npx theme-variable-manager-tool start-tool --config ./your/config/path/themeConfig.json
+npx theme-variable-manager-tool start-tool ./your/config/path/themeConfig.json
 工具启动失败？ 确保你的配置文件格式正确，并且主题文件存在于配置指定的路径中。
 
 许可证

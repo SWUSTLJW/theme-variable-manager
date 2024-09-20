@@ -34,7 +34,7 @@ const serverFile = files.find(file => file.startsWith('server') && file.endsWith
 // 动态获取文件路径
 if (serverFile) {
   const serverPath = path.join(distDir, serverFile);
-  const server = spawn('node', [serverPath], { stdio: 'inherit' });
+  const server = spawn('node', [serverPath, configPath], { stdio: 'inherit' });
 
   // 监听错误事件
 server.on('error', (err) => {
